@@ -1,0 +1,10 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+
+jwt:
+  secret: "comicfun-dev-secret-key"
+  expire_hours: 24
+
+data:
+  path: "data"
