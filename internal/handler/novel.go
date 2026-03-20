@@ -205,7 +205,7 @@ func ListNovels(c *gin.Context) {
 			CoverImgURL:  a.CoverImgURL,
 			IsCompleted:  a.IsCompleted,
 			AccessLevel:  a.AccessLevel,
-			PublishTime:  a.PublishTime,
+			PublishTime:  FormatDateTime(a.PublishTime),
 			VolumeCount:  volumeCount,
 			ChapterCount: chapterCount,
 		}
@@ -223,7 +223,7 @@ func CreateNovel(c *gin.Context) {
 		return
 	}
 
-	now := time.Now().Format("2006-01-02 15:04:05")
+	now := time.Now()
 	artifact := model.Artifact{
 		ContentType: model.ContentTypeNovel,
 		Title:       req.Title,
@@ -233,9 +233,18 @@ func CreateNovel(c *gin.Context) {
 		IsCompleted: req.IsCompleted,
 		UserID:      userID,
 		AccessLevel: req.AccessLevel,
-		PublishTime: req.PublishTime,
 		CreateTime:  now,
 		UpdateTime:  now,
+	}
+
+	if req.PublishTime != "" {
+		if publishTime, err := ParseDateTime(req.PublishTime); err == nil {
+			artifact.PublishTime = publishTime
+		} else {
+			artifact.PublishTime = now
+		}
+	} else {
+		artifact.PublishTime = now
 	}
 
 	if err := database.DB.Create(&artifact).Error; err != nil {
@@ -333,7 +342,7 @@ func GetNovel(c *gin.Context) {
 		CoverImgURL: artifact.CoverImgURL,
 		IsCompleted: artifact.IsCompleted,
 		AccessLevel: artifact.AccessLevel,
-		PublishTime: artifact.PublishTime,
+		PublishTime: FormatDateTime(artifact.PublishTime),
 		Volumes:     volumeData,
 		Tags:        tagData,
 	})
@@ -382,9 +391,11 @@ func UpdateNovel(c *gin.Context) {
 		artifact.AccessLevel = *req.AccessLevel
 	}
 	if req.PublishTime != "" {
-		artifact.PublishTime = req.PublishTime
+		if publishTime, err := ParseDateTime(req.PublishTime); err == nil {
+			artifact.PublishTime = publishTime
+		}
 	}
-	artifact.UpdateTime = time.Now().Format("2006-01-02 15:04:05")
+	artifact.UpdateTime = time.Now()
 
 	if err := database.DB.Save(&artifact).Error; err != nil {
 		InternalError(c, "failed to update novel")
@@ -585,7 +596,7 @@ func ListChapters(c *gin.Context) {
 			Title:        ch.Title,
 			Content:      ch.Content,
 			DisplayOrder: ch.DisplayOrder,
-			PublishTime:  ch.PublishTime,
+			PublishTime:  FormatDateTime(ch.PublishTime),
 		}
 	}
 
@@ -648,7 +659,7 @@ func GetChapter(c *gin.Context) {
 		Title:        chapter.Title,
 		Content:      chapter.Content,
 		DisplayOrder: chapter.DisplayOrder,
-		PublishTime:  chapter.PublishTime,
+		PublishTime:  FormatDateTime(chapter.PublishTime),
 	})
 }
 
@@ -674,7 +685,12 @@ func CreateChapter(c *gin.Context) {
 		Content:       req.Content,
 		DisplayOrder:  maxOrder + 1,
 		NovelVolumeID: parseUint(volumeID),
-		PublishTime:   req.PublishTime,
+	}
+
+	if req.PublishTime != "" {
+		if publishTime, err := ParseDateTime(req.PublishTime); err == nil {
+			chapter.PublishTime = publishTime
+		}
 	}
 
 	if err := database.DB.Create(&chapter).Error; err != nil {
@@ -687,7 +703,7 @@ func CreateChapter(c *gin.Context) {
 		Title:        chapter.Title,
 		Content:      chapter.Content,
 		DisplayOrder: chapter.DisplayOrder,
-		PublishTime:  chapter.PublishTime,
+		PublishTime:  FormatDateTime(chapter.PublishTime),
 	})
 }
 
@@ -720,7 +736,9 @@ func UpdateChapter(c *gin.Context) {
 		chapter.DisplayOrder = *req.DisplayOrder
 	}
 	if req.PublishTime != "" {
-		chapter.PublishTime = req.PublishTime
+		if publishTime, err := ParseDateTime(req.PublishTime); err == nil {
+			chapter.PublishTime = publishTime
+		}
 	}
 
 	if err := database.DB.Save(&chapter).Error; err != nil {
@@ -819,7 +837,7 @@ func GetNovelStructure(c *gin.Context) {
 			Title:        ch.Title,
 			Content:      ch.Content,
 			DisplayOrder: ch.DisplayOrder,
-			PublishTime:  ch.PublishTime,
+			PublishTime:  FormatDateTime(ch.PublishTime),
 		})
 	}
 

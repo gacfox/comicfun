@@ -138,7 +138,7 @@ func ListArtifacts(c *gin.Context) {
 			Title:       a.Title,
 			CoverImgURL: a.CoverImgURL,
 			IsCompleted: a.IsCompleted,
-			PublishTime: a.PublishTime,
+			PublishTime: FormatDateTime(a.PublishTime),
 		}
 	}
 

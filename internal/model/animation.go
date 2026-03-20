@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type AnimationVolume struct {
 	ID           uint   `gorm:"primaryKey"`
 	Title        string `gorm:"column:title"`
@@ -9,10 +11,10 @@ type AnimationVolume struct {
 }
 
 type AnimationChapter struct {
-	ID                uint   `gorm:"primaryKey"`
-	Title             string `gorm:"column:title"`
-	VideoURL          string `gorm:"column:video_url"`
-	DisplayOrder      int    `gorm:"column:display_order"`
-	AnimationVolumeID uint   `gorm:"column:animation_volume_id"`
-	PublishTime       string `gorm:"column:publish_time"`
+	ID                uint      `gorm:"primaryKey"`
+	Title             string    `gorm:"column:title"`
+	VideoURL          string    `gorm:"column:video_url"`
+	DisplayOrder      int       `gorm:"column:display_order"`
+	AnimationVolumeID uint      `gorm:"column:animation_volume_id"`
+	PublishTime       time.Time `gorm:"column:publish_time"`
 }

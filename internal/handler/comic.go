@@ -240,7 +240,7 @@ func ListComics(c *gin.Context) {
 			CoverImgURL:  a.CoverImgURL,
 			IsCompleted:  a.IsCompleted,
 			AccessLevel:  a.AccessLevel,
-			PublishTime:  a.PublishTime,
+			PublishTime:  FormatDateTime(a.PublishTime),
 			VolumeCount:  volumeCount,
 			ChapterCount: chapterCount,
 		}
@@ -258,7 +258,7 @@ func CreateComic(c *gin.Context) {
 		return
 	}
 
-	now := time.Now().Format("2006-01-02 15:04:05")
+	now := time.Now()
 	artifact := model.Artifact{
 		ContentType: model.ContentTypeComic,
 		Title:       req.Title,
@@ -268,9 +268,18 @@ func CreateComic(c *gin.Context) {
 		IsCompleted: req.IsCompleted,
 		UserID:      userID,
 		AccessLevel: req.AccessLevel,
-		PublishTime: req.PublishTime,
 		CreateTime:  now,
 		UpdateTime:  now,
+	}
+
+	if req.PublishTime != "" {
+		if publishTime, err := ParseDateTime(req.PublishTime); err == nil {
+			artifact.PublishTime = publishTime
+		} else {
+			artifact.PublishTime = now
+		}
+	} else {
+		artifact.PublishTime = now
 	}
 
 	if err := database.DB.Create(&artifact).Error; err != nil {
@@ -368,7 +377,7 @@ func GetComic(c *gin.Context) {
 		CoverImgURL: artifact.CoverImgURL,
 		IsCompleted: artifact.IsCompleted,
 		AccessLevel: artifact.AccessLevel,
-		PublishTime: artifact.PublishTime,
+		PublishTime: FormatDateTime(artifact.PublishTime),
 		Volumes:     volumeData,
 		Tags:        tagData,
 	})
@@ -417,9 +426,11 @@ func UpdateComic(c *gin.Context) {
 		artifact.AccessLevel = *req.AccessLevel
 	}
 	if req.PublishTime != "" {
-		artifact.PublishTime = req.PublishTime
+		if publishTime, err := ParseDateTime(req.PublishTime); err == nil {
+			artifact.PublishTime = publishTime
+		}
 	}
-	artifact.UpdateTime = time.Now().Format("2006-01-02 15:04:05")
+	artifact.UpdateTime = time.Now()
 
 	if err := database.DB.Save(&artifact).Error; err != nil {
 		InternalError(c, "failed to update comic")
@@ -643,7 +654,7 @@ func ListComicChapters(c *gin.Context) {
 			SplitType:    ch.SplitType,
 			ColorType:    ch.ColorType,
 			DisplayOrder: ch.DisplayOrder,
-			PublishTime:  ch.PublishTime,
+			PublishTime:  FormatDateTime(ch.PublishTime),
 		}
 	}
 
@@ -707,7 +718,7 @@ func GetComicChapter(c *gin.Context) {
 		SplitType:    chapter.SplitType,
 		ColorType:    chapter.ColorType,
 		DisplayOrder: chapter.DisplayOrder,
-		PublishTime:  chapter.PublishTime,
+		PublishTime:  FormatDateTime(chapter.PublishTime),
 	})
 }
 
@@ -734,7 +745,12 @@ func CreateComicChapter(c *gin.Context) {
 		ColorType:     req.ColorType,
 		DisplayOrder:  maxOrder + 1,
 		ComicVolumeID: parseUint(volumeID),
-		PublishTime:   req.PublishTime,
+	}
+
+	if req.PublishTime != "" {
+		if publishTime, err := ParseDateTime(req.PublishTime); err == nil {
+			chapter.PublishTime = publishTime
+		}
 	}
 
 	if err := database.DB.Create(&chapter).Error; err != nil {
@@ -748,7 +764,7 @@ func CreateComicChapter(c *gin.Context) {
 		SplitType:    chapter.SplitType,
 		ColorType:    chapter.ColorType,
 		DisplayOrder: chapter.DisplayOrder,
-		PublishTime:  chapter.PublishTime,
+		PublishTime:  FormatDateTime(chapter.PublishTime),
 	})
 }
 
@@ -784,7 +800,9 @@ func UpdateComicChapter(c *gin.Context) {
 		chapter.DisplayOrder = *req.DisplayOrder
 	}
 	if req.PublishTime != "" {
-		chapter.PublishTime = req.PublishTime
+		if publishTime, err := ParseDateTime(req.PublishTime); err == nil {
+			chapter.PublishTime = publishTime
+		}
 	}
 
 	if err := database.DB.Save(&chapter).Error; err != nil {
@@ -1136,7 +1154,7 @@ func GetComicStructure(c *gin.Context) {
 			SplitType:    ch.SplitType,
 			ColorType:    ch.ColorType,
 			DisplayOrder: ch.DisplayOrder,
-			PublishTime:  ch.PublishTime,
+			PublishTime:  FormatDateTime(ch.PublishTime),
 			Pages:        pages,
 		})
 	}
@@ -1344,9 +1362,9 @@ func generateComicInfo(artifact *model.Artifact, volume *model.ComicVolume, chap
 		writer.WriteString("</Volume>\n")
 	}
 
-	if artifact.PublishTime != "" {
+	if !artifact.PublishTime.IsZero() {
 		writer.WriteString("  <Year>")
-		writer.WriteString(strings.Split(artifact.PublishTime, "-")[0])
+		writer.WriteString(fmt.Sprintf("%d", artifact.PublishTime.Year()))
 		writer.WriteString("</Year>\n")
 	}
 

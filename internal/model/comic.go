@@ -1,8 +1,10 @@
 package model
 
+import "time"
+
 const (
-	SplitTypeNormal  = 1
-	SplitTypeStrip   = 2
+	SplitTypeNormal = 1
+	SplitTypeStrip  = 2
 )
 
 const (
@@ -21,13 +23,13 @@ type ComicVolume struct {
 }
 
 type ComicChapter struct {
-	ID            uint   `gorm:"primaryKey"`
-	Title         string `gorm:"column:title"`
-	SplitType     int    `gorm:"column:split_type"`
-	ColorType     int    `gorm:"column:color_type"`
-	DisplayOrder  int    `gorm:"column:display_order"`
-	ComicVolumeID uint   `gorm:"column:comic_volume_id"`
-	PublishTime   string `gorm:"column:publish_time"`
+	ID            uint      `gorm:"primaryKey"`
+	Title         string    `gorm:"column:title"`
+	SplitType     int       `gorm:"column:split_type"`
+	ColorType     int       `gorm:"column:color_type"`
+	DisplayOrder  int       `gorm:"column:display_order"`
+	ComicVolumeID uint      `gorm:"column:comic_volume_id"`
+	PublishTime   time.Time `gorm:"column:publish_time"`
 }
 
 type ComicPage struct {

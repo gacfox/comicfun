@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type NovelVolume struct {
 	ID           uint   `gorm:"primaryKey"`
 	Title        string `gorm:"column:title"`
@@ -9,10 +11,10 @@ type NovelVolume struct {
 }
 
 type NovelChapter struct {
-	ID            uint   `gorm:"primaryKey"`
-	Title         string `gorm:"column:title"`
-	Content       string `gorm:"column:content"`
-	DisplayOrder  int    `gorm:"column:display_order"`
-	NovelVolumeID uint   `gorm:"column:novel_volume_id"`
-	PublishTime   string `gorm:"column:publish_time"`
+	ID            uint      `gorm:"primaryKey"`
+	Title         string    `gorm:"column:title"`
+	Content       string    `gorm:"column:content"`
+	DisplayOrder  int       `gorm:"column:display_order"`
+	NovelVolumeID uint      `gorm:"column:novel_volume_id"`
+	PublishTime   time.Time `gorm:"column:publish_time"`
 }

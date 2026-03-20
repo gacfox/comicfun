@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,6 +17,25 @@ const (
 	CodeSuccess = 0
 	CodeError   = 1
 )
+
+// DateTimeFormat 标准日期时间格式
+const DateTimeFormat = "2006-01-02 15:04:05"
+
+// ParseDateTime 解析日期时间字符串为 time.Time
+func ParseDateTime(s string) (time.Time, error) {
+	if s == "" {
+		return time.Time{}, nil
+	}
+	return time.Parse(DateTimeFormat, s)
+}
+
+// FormatDateTime 将 time.Time 格式化为字符串
+func FormatDateTime(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Format(DateTimeFormat)
+}
 
 func Success(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, Response{
