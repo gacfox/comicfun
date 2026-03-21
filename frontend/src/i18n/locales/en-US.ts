@@ -403,6 +403,11 @@ export const enUS = {
     save: "Save",
     noUsers: "No regular users available",
   },
+  notFound: {
+    title: "404",
+    message: "Page not found",
+    backHome: "Back to home",
+  },
 };
 
 export type Translation = typeof enUS;

@@ -19,6 +19,7 @@ import { ArtifactDetailPage } from "@/pages/ArtifactDetailPage";
 import { NovelReaderPage } from "@/pages/NovelReaderPage";
 import { ComicReaderPage } from "@/pages/ComicReaderPage";
 import { AnimationPlayerPage } from "@/pages/AnimationPlayerPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 import { useAuthStore } from "@/stores";
 
 export function RoutesView() {
@@ -69,7 +70,7 @@ export function RoutesView() {
         path="/read/animation/:animationId/:volumeId/:chapterId"
         element={requireAuth(<AnimationPlayerPage />)}
       />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

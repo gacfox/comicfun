@@ -396,4 +396,9 @@ export const zhCN = {
     save: "保存",
     noUsers: "暂无普通用户",
   },
+  notFound: {
+    title: "404",
+    message: "页面未找到",
+    backHome: "返回首页",
+  },
 };
