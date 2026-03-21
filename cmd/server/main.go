@@ -1,6 +1,7 @@
 package main
 
 import (
+	"comicfun"
 	"comicfun/internal/config"
 	"comicfun/internal/database"
 	"comicfun/internal/router"
@@ -22,5 +23,6 @@ func main() {
 	r := gin.Default()
 	r.Static("/uploads", cfg.UploadPath())
 	router.Setup(r)
+	router.SetupStaticFiles(r, comicfun.DistFS)
 	r.Run(cfg.ServerAddr())
 }
