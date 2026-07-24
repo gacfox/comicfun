@@ -2,8 +2,11 @@ package middleware
 
 import (
 	"comicfun/internal/auth"
+	"comicfun/internal/database"
+	"comicfun/internal/model"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,6 +39,20 @@ func AuthRequired() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		if claims.KeyID > 0 {
+			var apiKey model.APIKey
+			if err := database.DB.First(&apiKey, claims.KeyID).Error; err != nil ||
+				apiKey.Revoked == 1 ||
+				apiKey.TokenHash != auth.HashToken(tokenString) {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid api key"})
+				c.Abort()
+				return
+			}
+			now := time.Now()
+			database.DB.Model(&apiKey).Update("last_used_time", now)
+		}
+
 		c.Set("user_id", claims.UserID)
 		c.Set("username", claims.Username)
 		c.Set("is_admin", claims.IsAdmin)

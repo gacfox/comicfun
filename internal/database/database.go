@@ -53,5 +53,6 @@ func autoMigrate() error {
 		&model.Bookmark{},
 		&model.History{},
 		&model.UserArtifactACL{},
+		&model.APIKey{},
 	)
 }

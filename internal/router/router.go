@@ -53,6 +53,9 @@ func Setup(r *gin.Engine) {
 
 		admin := api.Group("").Use(middleware.AuthRequired(), middleware.AdminRequired())
 		{
+			admin.POST("/apikey/create", handler.CreateAPIKey)
+			admin.GET("/apikey/list", handler.ListAPIKeys)
+			admin.DELETE("/apikey/revoke/:id", handler.RevokeAPIKey)
 			admin.POST("/tag/create", handler.CreateTag)
 			admin.PUT("/tag/update/:id", handler.UpdateTag)
 			admin.DELETE("/tag/delete/:id", handler.DeleteTag)

@@ -38,6 +38,28 @@ export const enUS = {
       title: "Theme",
       description: "Select interface display theme",
     },
+    apikey: {
+      title: "API Keys",
+      description:
+        "Issue long-lived API keys so external programs (e.g. crawlers) can call management APIs",
+      create: "Create API Key",
+      name: "Name",
+      namePlaceholder: "e.g. novel crawler",
+      createTime: "Created",
+      lastUsedTime: "Last used",
+      never: "Never",
+      status: "Status",
+      active: "Active",
+      revoked: "Revoked",
+      revoke: "Revoke",
+      revokeTitle: "Revoke API Key",
+      revokeConfirm:
+        'Are you sure you want to revoke the API key "{{name}}"? It will stop working immediately and cannot be restored.',
+      createdTitle: "API Key Created",
+      createdMessage:
+        "Copy and store the following API key now. It will only be shown once:",
+      copy: "Copy",
+    },
   },
   nav: {
     home: "Home",
